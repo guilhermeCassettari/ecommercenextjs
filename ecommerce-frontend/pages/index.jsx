@@ -2,10 +2,11 @@ import Head from 'next/head'
 import Link from 'next/link'
 import styles from '../styles/Home.module.css'
 
-import products from '../products.json'
-import { fromImageFromUrl } from '../utils/urls'
 
-export default function Home() {
+import { fromImageFromUrl, API_URL } from '../utils/urls'
+import { twoDecimals } from '../utils/format'
+
+export default function Home({ products }) {
   return (
     <div >
       <Head>
@@ -24,7 +25,7 @@ export default function Home() {
                       <img src={fromImageFromUrl(product.image)} />
                     </div>
                     <div className={styles.product__Col}>
-                      {product.name} {product.price}
+                      {product.name} ${twoDecimals(product.price)}
                     </div>
                   </div>
                 </a>
@@ -39,4 +40,17 @@ export default function Home() {
 
     </div>
   )
+}
+
+export async function getStaticProps(){
+  // Fetch the products
+  const product_res = await fetch(`${API_URL}/products/`)
+  const products = await product_res.json()
+
+  // Return products
+  return {
+    props:{
+      products
+    }
+  }
 }
